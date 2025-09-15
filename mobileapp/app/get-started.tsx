@@ -1,10 +1,8 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Stargrey from "@/assets/images/star-grey.svg";
 import Star from "@/assets/images/star.svg";
-import Wallet from "@/assets/images/wallet-big.svg";
-import WalletSmall from "@/assets/images/wallet-small.svg";
 import { Button } from "@/src/shared";
 
 const GetStarted = () => {
@@ -31,7 +29,11 @@ const GetStarted = () => {
                         <Star />
                     </View>
 
-                    <Wallet />
+                    <Image 
+                        source={require("@/assets/images/wallet.png")}
+                        className="w-[18rem] h-[18rem]"
+                        resizeMode="contain"
+                    />
                 </View>
             </View>
 
@@ -42,7 +44,11 @@ const GetStarted = () => {
 
                 <View className="flex-row items-center gap-3 bg-[#18181B05] py-4 px-6 rounded-xl mb-8">
                     <View className="">
-                        <WalletSmall />
+                        <Image 
+                            source={require("@/assets/images/wallet-small.png")}
+                            className="w-8 h-8"
+                            resizeMode="contain"
+                        />
                     </View>
 
                     <View>
