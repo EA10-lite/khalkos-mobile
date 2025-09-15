@@ -1,27 +1,33 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# dependencies
+# Dependencies
 node_modules/
+*/node_modules/
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
+# Expo (Mobile App)
+mobileapp/.expo/
+mobileapp/dist/
+mobileapp/web-build/
+mobileapp/expo-env.d.ts
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+# Native (Mobile App)
+mobileapp/.kotlin/
+mobileapp/*.orig.*
+mobileapp/*.jks
+mobileapp/*.p8
+mobileapp/*.p12
+mobileapp/*.key
+mobileapp/*.mobileprovision
 
-# Metro
-.metro-health-check*
+# Metro (Mobile App)
+mobileapp/.metro-health-check*
 
-# debug
+# Backend
+backend/dist/
+backend/build/
+backend/node_modules/
+
+# Debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
@@ -30,20 +36,46 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# Environment files
+.env
 .env*.local
+.env.development
+.env.production
+.env.test
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 
-app-example
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
 
-# generated native folders
-/ios
-/android
+# Logs
+logs/
+*.log
 
-target
-.snfoundry_cache/
-snfoundry_trace/
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
 coverage/
-profile/
+.nyc_output
+
+# Generated native folders (Mobile App)
+mobileapp/ios/
+mobileapp/android/
+
+# Cairo/Starknet (Contracts)
+contracts/target/
+contracts/.snfoundry_cache/
+contracts/snfoundry_trace/
+contracts/profile/
+
+# Temporary files
+*.tmp
+*.temp
