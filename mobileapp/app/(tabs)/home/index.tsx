@@ -104,7 +104,7 @@ const Home = () => {
 
             {/* Promotional Banner */}
             {showPromoBanner && (
-                <View className="mx-6 mb-4">
+                <View className="mx-6 mb-4 hidden">
                     <View className="bg-gradient-to-r from-purple-400 to-pink-400 p-4 rounded-[16px] relative">
                         <TouchableOpacity 
                             className="absolute top-3 right-3 z-10"
