@@ -1,0 +1,14 @@
+pub const ZERO_ADDRESS_NOT_ALLOWED: felt252 = 'Zero address not allowed';
+pub const AMOUNT_MUST_BE_GREATER_THAN_0: felt252 = 'Amount must be greater than 0';
+pub const INVALID_TOKEN_ADDRESS: felt252 = 'Invalid token address';
+pub const INSUFFICIENT_ALLOWANCE: felt252 = 'Insufficient allowance';
+pub const INSUFFICIENT_BALANCE: felt252 = 'Insufficient contract balance';
+pub const ENROLLMENT_NOT_IN_VOTE_PHASE: felt252 = 'Enrollment not in vote phase';
+pub const CLASS_HASH_CANNOT_BE_ZERO: felt252 = 'Class hash cannot be zero';
+pub const CONTRACT_IS_PAUSED_ALREADY: felt252 = 'Contract is paused already';
+pub const CONTRACT_IS_ACTIVE_ALREADY: felt252 = 'Contract is already active';
+pub const UNAUTHORIZED_CALLER: felt252 = 'Unauthorized caller';
+pub const CONTRACT_IS_PAUSED: felt252 = 'Contract is paused';
+pub const TIME_LIMIT_EXPIRED: felt252 = 'Time limit has expired';
+pub const TIME_LIMIT_NOT_EXPIRED: felt252 = 'Time limit has not expired yet';
+pub const CHALLENGE_NOT_FOUND: felt252 = 'Challenge not found';
