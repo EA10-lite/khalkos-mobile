@@ -8,3 +8,4 @@ pub mod types {
     pub mod events;
     pub mod structs;
 }
+pub mod Khalkos;

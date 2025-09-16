@@ -28,6 +28,7 @@ pub struct WithdrawnFromVault {
     pub vault: ContractAddress,
     pub amount: u256,
     pub shares: u256,
+    pub timestamp: u64,
 }
 
 #[derive(Drop, starknet::Event)]
@@ -36,6 +37,7 @@ pub struct RedeemedFromVault {
     pub vault: ContractAddress,
     pub shares: u256,
     pub amount: u256,
+    pub timestamp: u64,
 }
 
 #[derive(Drop, starknet::Event)]
