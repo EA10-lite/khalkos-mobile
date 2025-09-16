@@ -17,6 +17,7 @@ import Logout from "@/assets/images/logout.svg";
 
 
 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AppearanceModal from "./AppearanceModal";
 
@@ -94,6 +95,11 @@ const AccountModal = ({ isOpen, closeModal }: AccountModalProps) => {
             >
                 <View className="">
                     <View className="header p-4 bg-gray-100 rounded-[16px] w-full h-40 justify-end mb-6">
+                        <TouchableOpacity onPress={closeModal} className="absolute top-4 right-4">
+                            <MaterialCommunityIcons name="close" size={24} color="black" />
+                        </TouchableOpacity>
+
+                        
                         <View className="flex-row items-center gap-2">
                             <Avatar 
                                 name="Emmanuel Chris"
