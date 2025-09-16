@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Stargrey from "@/assets/images/star-grey.svg";
 import Star from "@/assets/images/star.svg";
 import { Button } from "@/src/shared";
+import { router } from "expo-router";
 
 const GetStarted = () => {
     const insets = useSafeAreaInsets();
@@ -59,7 +60,7 @@ const GetStarted = () => {
 
                 <Button 
                     title="View wallet"
-                    onPress={() => {}}
+                    onPress={() => router.replace("/(tabs)/home")}
                 />
             </View>
         </View>

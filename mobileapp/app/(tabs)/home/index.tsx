@@ -1,7 +1,6 @@
-import { Avatar } from "@/src/shared";
+import { Navbar } from "@/src/shared";
 import { Foundation, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import ChartArrow from "@/assets/images/arrow.svg";
 import Receive from "@/assets/images/receive.svg";
@@ -41,8 +40,8 @@ const TOKENS = [
 ]
 
 const Home = () => {
-    const insets = useSafeAreaInsets();
     const [activeTab, setActiveTab] = useState<string>("assets");
+    const [showPromoBanner, setShowPromoBanner] = useState<boolean>(true);
 
     const [isSendModalVisible, setIsSendModalVisible] = useState<boolean>(false);
     const [isSwapModalVisible, setIsSwapModalVisible] = useState<boolean>(false);
@@ -75,17 +74,7 @@ const Home = () => {
     return (
         <View className="w-full h-full">
             <View className="bg-white pb-6 rounded-br-[16px] rounded-bl-[16px] mb-4">
-                <View 
-                    className="flex-row items-center justify-between px-6 pb-2"
-                    style={{ paddingTop: insets.top }}
-                >
-                    <Avatar name="Emmanuel Chris" />
-
-                    <View className="flex-row items-center gap-4">
-                        <MaterialCommunityIcons name="dots-horizontal" size={24} color={"#71717A"} />
-                        <MaterialCommunityIcons name="line-scan" size={24} color={"#71717A"} />
-                    </View>
-                </View>
+                <Navbar />
 
                 <View className="px-6">
                     <View className="my-8">
@@ -113,7 +102,35 @@ const Home = () => {
                 </View>
             </View>
 
-
+            {/* Promotional Banner */}
+            {showPromoBanner && (
+                <View className="mx-6 mb-4">
+                    <View className="bg-gradient-to-r from-purple-400 to-pink-400 p-4 rounded-[16px] relative">
+                        <TouchableOpacity 
+                            className="absolute top-3 right-3 z-10"
+                            onPress={() => setShowPromoBanner(false)}
+                        >
+                            <MaterialCommunityIcons name="close" size={20} color={"#FFFFFF"} />
+                        </TouchableOpacity>
+                        
+                        <View className="flex-row items-center gap-3 pr-8">
+                            <View className="w-10 h-10 bg-white/20 rounded-full items-center justify-center">
+                                <MaterialCommunityIcons name="gift" size={24} color={"#FFFFFF"} />
+                            </View>
+                            
+                            <View className="flex-1">
+                                <Text className="text-white text-base font-medium mb-1">
+                                    Set your savings % and yield more rewards
+                                </Text>
+                                <TouchableOpacity className="flex-row items-center gap-1">
+                                    <Text className="text-white text-sm font-semibold">Get started</Text>
+                                    <MaterialCommunityIcons name="arrow-right" size={16} color={"#FFFFFF"} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            )}
 
             <View className="bg-white p-6 grow rounded-tr-[16px] rounded-tl-[16px]">
                 <View className="flex-row items-center gap-4 mb-8">
