@@ -13,6 +13,7 @@ import { useState } from "react";
 
 const TOKENS = [
     {
+        address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
         image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1747033579",
         name: "Bitcoin",
         tokenPrice: "$100,000",
@@ -21,6 +22,7 @@ const TOKENS = [
         balanceValue: "$100",
     },
     {
+        address: "0x0000000000000000000000000000000000000000",
         image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1747033532",
         name: "Ethereum",
         tokenPrice: "$1,000",
@@ -29,6 +31,7 @@ const TOKENS = [
         balanceValue: "$200",
     },
     {
+        address: "0x0000000000000000000000000000000000000000",
         image: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042194",
         name: "USD Coin",
         tokenPrice: "$1",
@@ -169,6 +172,7 @@ const Home = () => {
             <ReceiveModal 
                 isOpen={isReceiveModalVisible} 
                 closeModal={() => setIsReceiveModalVisible(false)} 
+                token={TOKENS[0]}
             />
             <SwapModal 
                 isVisible={isSwapModalVisible} 

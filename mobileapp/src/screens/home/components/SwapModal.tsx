@@ -1,3 +1,4 @@
+import { Token } from "@/src/interfaces/token";
 import { EnterPin } from "@/src/shared/main";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import TokenDropdown from "./TokenDropdown";
 
 const TOKENS = [
     {
+        address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
         image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1747033579",
         name: "Bitcoin",
         tokenPrice: "$100,000",
@@ -15,6 +17,7 @@ const TOKENS = [
         balanceValue: "$100",
     },
     {
+        address: "0x0000000000000000000000000000000000000000",
         image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1747033532",
         name: "Ethereum",
         tokenPrice: "$1,000",
@@ -23,6 +26,7 @@ const TOKENS = [
         balanceValue: "$200",
     },
     {
+        address: "0x0000000000000000000000000000000000000000",
         image: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042194",
         name: "USD Coin",
         tokenPrice: "$1",
@@ -40,21 +44,11 @@ interface SwapModalProps {
     onClose: () => void;
 }
 
-
-type TokenProps = {
-    image: string;
-    name: string;
-    tokenPrice: string;
-    symbol: string;
-    tokenBalance: string;
-    balanceValue: string;
-}
-
 const SwapModal = ({ isVisible, onClose }: SwapModalProps) => {
     const insets = useSafeAreaInsets();
     const [transactionType, setTransactionType] = useState<string>("normal");
-    const [fromToken, setFromToken] = useState<TokenProps>(TOKENS[0])
-    const [toToken, setToToken] = useState<TokenProps | null>(null)
+    const [fromToken, setFromToken] = useState<Token>(TOKENS[0])
+    const [toToken, setToToken] = useState<Token | null>(null)
 
     return (
         <Modal
@@ -98,10 +92,10 @@ const SwapModal = ({ isVisible, onClose }: SwapModalProps) => {
 }
 
 type SwapFormProps = {
-    selectedToken: TokenProps;
-    setSelectedToken: (token: TokenProps) => void;
-    toToken: TokenProps | null;
-    setToToken: (token: TokenProps) => void;
+    selectedToken: Token;
+    setSelectedToken: (token: Token) => void;
+    toToken: Token | null;
+    setToToken: (token: Token) => void;
 }
 
 const SwapForm = ({selectedToken, setSelectedToken, toToken, setToToken}: SwapFormProps) => {
@@ -223,7 +217,7 @@ const SwapForm = ({selectedToken, setSelectedToken, toToken, setToToken}: SwapFo
                 closeModal={() => setOpenTokenDropdown(false)} 
                 tokens={TOKENS}
                 selectedToken={dropdownType === "from" ? selectedToken.name : toToken?.name || ""}
-                setSelectedToken={(token: TokenProps) => dropdownType === "from" ? setSelectedToken(token) : setToToken(token)}
+                setSelectedToken={(token: Token) => dropdownType === "from" ? setSelectedToken(token) : setToToken(token)}
             />
         </>
     )
@@ -232,7 +226,7 @@ const SwapForm = ({selectedToken, setSelectedToken, toToken, setToToken}: SwapFo
 
 type TransactionProcessProps = {
     transactionType: string;
-    selectedToken: TokenProps;
+    selectedToken: Token;
     setTransactionType: (type: string) => void;
 }
 
