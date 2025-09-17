@@ -1,3 +1,4 @@
+import { Token } from "@/src/interfaces/token";
 import { EnterPin } from "@/src/shared/main";
 import { Ionicons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import TokenDropdown from "./TokenDropdown";
 
 const TOKENS = [
     {
+        address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
         image: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1747033579",
         name: "Bitcoin",
         tokenPrice: "$100,000",
@@ -15,6 +17,7 @@ const TOKENS = [
         balanceValue: "$100",
     },
     {
+        address: "0x0000000000000000000000000000000000000000",
         image: "https://assets.coingecko.com/coins/images/279/large/ethereum.png?1747033532",
         name: "Ethereum",
         tokenPrice: "$1,000",
@@ -23,6 +26,7 @@ const TOKENS = [
         balanceValue: "$200",
     },
     {
+        address: "0x0000000000000000000000000000000000000000",
         image: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png?1547042194",
         name: "USD Coin",
         tokenPrice: "$1",
@@ -40,20 +44,10 @@ interface SendModalProps {
     onClose: () => void;
 }
 
-
-type TokenProps = {
-    image: string;
-    name: string;
-    tokenPrice: string;
-    symbol: string;
-    tokenBalance: string;
-    balanceValue: string;
-}
-
 const SendModal = ({ isVisible, onClose }: SendModalProps) => {
     const insets = useSafeAreaInsets();
     const [transactionType, setTransactionType] = useState<string>("normal");
-    const [selectedToken, setSelectedToken] = useState<TokenProps>(TOKENS[0])
+    const [selectedToken, setSelectedToken] = useState<Token>(TOKENS[0])
 
     return (
         <Modal
@@ -93,8 +87,8 @@ const SendModal = ({ isVisible, onClose }: SendModalProps) => {
 }
 
 type SendFormProps = {
-    selectedToken: TokenProps;
-    setSelectedToken: (token: TokenProps) => void;
+    selectedToken: Token;
+    setSelectedToken: (token: Token) => void;
 }
 
 const SendForm = ({selectedToken, setSelectedToken}: SendFormProps) => {
@@ -165,7 +159,7 @@ const SendForm = ({selectedToken, setSelectedToken}: SendFormProps) => {
                 closeModal={() => setOpenTokenDropdown(false)} 
                 tokens={TOKENS}
                 selectedToken={selectedToken.name}
-                setSelectedToken={(token: TokenProps) => setSelectedToken(token)}
+                setSelectedToken={(token: Token) => setSelectedToken(token)}
             />
         </>
     )
@@ -174,7 +168,7 @@ const SendForm = ({selectedToken, setSelectedToken}: SendFormProps) => {
 
 type TransactionProcessProps = {
     transactionType: string;
-    selectedToken: TokenProps;
+    selectedToken: Token;
     setTransactionType: (type: string) => void;
 }
 

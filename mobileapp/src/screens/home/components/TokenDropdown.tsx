@@ -1,3 +1,4 @@
+import { Token } from "@/src/interfaces/token";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import Modal from "react-native-modal";
@@ -6,19 +7,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface TokenDropdownProps {
     isOpen: boolean;
     closeModal: () => void;
-    tokens: TokenProps[];
+    tokens: Token[];
     selectedToken: string;
-    setSelectedToken: (token: TokenProps) => void;
+    setSelectedToken: (token: Token) => void;
 }
 
-type TokenProps = {
-    image: string;
-    name: string;
-    tokenPrice: string;
-    symbol: string;
-    tokenBalance: string;
-    balanceValue: string;
-}
 const TokenDropdown = ({ isOpen, closeModal, tokens, selectedToken, setSelectedToken }: TokenDropdownProps) => {
     const insets = useSafeAreaInsets();
 
@@ -64,7 +57,7 @@ const TokenDropdown = ({ isOpen, closeModal, tokens, selectedToken, setSelectedT
     )
 }
 
-interface TokensProps extends TokenProps {
+interface TokensProps extends Token {
     onPress: () => void;
     isSelected: boolean;
 }
