@@ -4,8 +4,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AccountModal, AvatarModal } from "../modals";
 import Avatar from "./Avatar";
-import { AccountModal, AvatarModal } from "./modals";
 
 const Navbar = () => {
     const insets = useSafeAreaInsets();

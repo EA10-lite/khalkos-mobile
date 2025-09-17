@@ -1,4 +1,4 @@
-import { Navbar } from "@/src/shared";
+import { Navbar } from "@/src/shared/main";
 import { Foundation, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -7,8 +7,7 @@ import Receive from "@/assets/images/receive.svg";
 import Save from "@/assets/images/save.svg";
 import Send from "@/assets/images/send.svg";
 import Swap from "@/assets/images/swap.svg";
-import SendModal from "@/src/screens/home/components/SendModal";
-import SwapModal from "@/src/screens/home/components/SwapModal";
+import { ReceiveModal, SendModal, SwapModal } from "@/src/screens/home/components";
 import { useState } from "react";
 
 
@@ -45,11 +44,12 @@ const Home = () => {
 
     const [isSendModalVisible, setIsSendModalVisible] = useState<boolean>(false);
     const [isSwapModalVisible, setIsSwapModalVisible] = useState<boolean>(false);
+    const [isReceiveModalVisible, setIsReceiveModalVisible] = useState<boolean>(false);
 
     const CTAS = [
         {
             title: "Receive",
-            onPress: () => {},
+            onPress: () => setIsReceiveModalVisible(true),
             icon: <Receive />,
         },
         {
@@ -162,8 +162,18 @@ const Home = () => {
             </View>
 
 
-            <SendModal isVisible={isSendModalVisible} onClose={() => setIsSendModalVisible(false)} />
-            <SwapModal isVisible={isSwapModalVisible} onClose={() => setIsSwapModalVisible(false)} />
+            <SendModal 
+                isVisible={isSendModalVisible} 
+                onClose={() => setIsSendModalVisible(false)} 
+            />
+            <ReceiveModal 
+                isOpen={isReceiveModalVisible} 
+                closeModal={() => setIsReceiveModalVisible(false)} 
+            />
+            <SwapModal 
+                isVisible={isSwapModalVisible} 
+                onClose={() => setIsSwapModalVisible(false)} 
+            />
         </View>
     )
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Modal from "react-native-modal";
-import Avatar from "../Avatar";
+import Avatar from "../main/Avatar";
 
 import Appearance from "@/assets/images/appearance.svg";
 import ChevronRight from "@/assets/images/arrow-right.svg";

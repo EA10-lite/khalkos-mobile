@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Stargrey from "@/assets/images/star-grey.svg";
 import Star from "@/assets/images/star.svg";
-import { Button } from "@/src/shared";
+import { Button } from "@/src/shared/main";
 import { router } from "expo-router";
 
 const GetStarted = () => {

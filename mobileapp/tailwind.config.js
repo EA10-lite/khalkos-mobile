@@ -28,6 +28,9 @@ module.exports = {
         regular: ["regular"],
         semibold: ["semibold"],
      },
+     boxShadow: {
+       'sm': '0 1px 0.5px 0.05px rgba(0, 0, 0, 0.05)',
+     },
     },
   },
   plugins: [],

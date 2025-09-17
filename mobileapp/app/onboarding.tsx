@@ -1,5 +1,5 @@
 import Illustration from "@/assets/images/illustration.svg";
-import { Button } from "@/src/shared";
+import { Button } from "@/src/shared/main";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Text, View } from "react-native";
