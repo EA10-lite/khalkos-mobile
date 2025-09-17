@@ -1,8 +1,11 @@
 import Illustration from "@/assets/images/illustration.svg";
+import StarknetWalletManager from "@/src/services/wallet/StarknetWalletManager";
 import { Button } from "@/src/shared";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Text, View } from "react-native";
+import { showMessage } from "react-native-flash-message";
+import { GestureHandlerRootView, PanGestureHandler, State } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ONBOARDING = [
@@ -15,7 +18,7 @@ const ONBOARDING = [
         description: "Khalkos rounds up every payment and invests the spare change automatically",
     },
     {
-        title: "Watch small change become big money",
+        title: "Watch small change become big",
         description: "Earn 8-15% APY while you spend normally. No effort required.",
     },
 ];
@@ -23,6 +26,8 @@ const ONBOARDING = [
 const Onboarding = () => {
     const insets = useSafeAreaInsets();
     const [step, setStep] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const walletManager = StarknetWalletManager.getInstance();
 
     const handleNext = () => {
         if (step < ONBOARDING.length - 1) {
@@ -30,31 +35,66 @@ const Onboarding = () => {
         }
     };
 
-    const handleGetStarted = () => {
-        router.push("/get-started");
+    const handlePrevious = () => {
+        if (step > 0) {
+            setStep(step - 1);
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        try {
+            setLoading(true);
+            
+            // Attempt Google sign-in and wallet creation
+            const walletData = await walletManager.loginWithGoogle();
+            
+            showMessage({
+                message: 'Wallet Created!',
+                description: `Your Starknet wallet has been created successfully!\nAddress: ${StarknetWalletManager.formatAddress(walletData.address)}`,
+                type: 'success',
+                duration: 3000,
+            });
+            
+            setTimeout(() => {
+                router.push('/get-started');
+            }, 1500);
+        } catch (error: any) {
+            showMessage({
+                message: 'Sign-in Failed',
+                description: error.message || 'Failed to create wallet. Please try again.',
+                type: 'danger',
+                duration: 4000,
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <View className="flex-1 items-center justify-between bg-secondary">
-            <View className="grow items-center justify-center">
-                <Illustration />
-            </View>
+        <GestureHandlerRootView className="flex-1">
+            <View className="flex-1 items-center justify-between bg-secondary">
+                <View className="grow items-center justify-center">
+                    <Illustration />
+                </View>
 
-            <View
-                className="w-full px-4"
-                style={{ paddingBottom: insets.bottom }}
-            >
-                <OnboardingStep
-                    title={ONBOARDING[step].title}
-                    description={ONBOARDING[step].description}
-                    step={step + 1}
-                    totalSteps={ONBOARDING.length}
-                    onNext={handleNext}
-                    isLastStep={step === ONBOARDING.length - 1}
-                    onGetStarted={handleGetStarted}
-                />
+                <View
+                    className="w-full px-4"
+                    style={{ paddingBottom: insets.bottom }}
+                >
+                    <OnboardingStep
+                        title={ONBOARDING[step].title}
+                        description={ONBOARDING[step].description}
+                        step={step + 1}
+                        totalSteps={ONBOARDING.length}
+                        onNext={handleNext}
+                        onPrevious={handlePrevious}
+                        isLastStep={step === ONBOARDING.length - 1}
+                        onGetStarted={handleGoogleSignIn}
+                        loading={loading}
+                    />
+                </View>
             </View>
-        </View>
+        </GestureHandlerRootView>
     );
 };
 
@@ -64,8 +104,10 @@ type OnboardingStepProps = {
     step: number;
     totalSteps: number;
     onNext?: () => void;
+    onPrevious?: () => void;
     onGetStarted?: () => void;
     isLastStep: boolean;
+    loading?: boolean;
 };
 
 const OnboardingStep = ({
@@ -74,10 +116,12 @@ const OnboardingStep = ({
     step,
     totalSteps,
     onNext,
+    onPrevious,
     onGetStarted,
     isLastStep,
+    loading = false,
 }: OnboardingStepProps) => {
-    const slideAnim = useRef(new Animated.Value(300)).current; // Start off-screen to the right
+    const slideAnim = useRef(new Animated.Value(0)).current; // Start at center
     const scaleAnims = useRef(
         Array(totalSteps)
             .fill(0)
@@ -85,16 +129,8 @@ const OnboardingStep = ({
     ).current;
 
     useEffect(() => {
-        // Reset slide animation
-        slideAnim.setValue(300);
-
-        // Slide in from right
-        Animated.timing(slideAnim, {
-            toValue: 0,
-            duration: 300,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: true,
-        }).start();
+        // Reset slide animation to center
+        slideAnim.setValue(0);
 
         // Animate step indicator dots
         scaleAnims.forEach((anim, index) => {
@@ -105,35 +141,69 @@ const OnboardingStep = ({
                 useNativeDriver: true,
             }).start();
         });
-
-        // Slide out to left when component unmounts (step changes)
-        return () => {
-            Animated.timing(slideAnim, {
-                toValue: -300,
-                duration: 300,
-                easing: Easing.in(Easing.ease),
-                useNativeDriver: true,
-            }).start();
-        };
     }, [step]);
 
+    const handleSwipeGesture = (event: any) => {
+        const { translationX, state } = event.nativeEvent;
+        
+        if (state === State.ACTIVE) {
+            // Provide visual feedback during swipe
+            slideAnim.setValue(translationX * 0.3); // Scale down the movement for subtle effect
+        } else if (state === State.END) {
+            const swipeThreshold = 50; // Minimum distance for a swipe
+            
+            if (translationX > swipeThreshold && onPrevious) {
+                // Swipe right - go to previous step
+                Animated.timing(slideAnim, {
+                    toValue: 300,
+                    duration: 200,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: true,
+                }).start(() => {
+                    onPrevious();
+                    slideAnim.setValue(0);
+                });
+            } else if (translationX < -swipeThreshold && onNext) {
+                // Swipe left - go to next step
+                Animated.timing(slideAnim, {
+                    toValue: -300,
+                    duration: 200,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: true,
+                }).start(() => {
+                    onNext();
+                    slideAnim.setValue(0);
+                });
+            } else {
+                // Snap back to center if swipe wasn't strong enough
+                Animated.spring(slideAnim, {
+                    toValue: 0,
+                    useNativeDriver: true,
+                }).start();
+            }
+        }
+    };
+
     return (
-        <Animated.View
-            className="w-full bg-white rounded-[40px] px-6 py-[40px]"
-            style={{ transform: [{ translateX: slideAnim }] }}
-        >
-            <Text className="text-2xl font-bold text-black text-center mb-4">
-                {title}
-            </Text>
-            <Text 
-                className="text-base font-medium text-foreground text-center mb-6"
-                style={{
-                    lineHeight: 20,
-                    letterSpacing: 0.25,
-                }}
-            >
-                {description}
-            </Text>
+        <View className="w-full bg-white rounded-[40px] px-6 py-[30px]">
+            <PanGestureHandler onHandlerStateChange={handleSwipeGesture}>
+                <Animated.View
+                    style={{ transform: [{ translateX: slideAnim }] }}
+                >
+                    <Text className="text-2xl font-bold text-black text-center mb-4">
+                        {title}
+                    </Text>
+                    <Text 
+                        className="text-base font-medium text-foreground text-center mb-6"
+                        style={{
+                            lineHeight: 20,
+                            letterSpacing: 0.25,
+                        }}
+                    >
+                        {description}
+                    </Text>
+                </Animated.View>
+            </PanGestureHandler>
 
             {/* Onboarding Step Indicator */}
             <View className="flex-row justify-center my-4">
@@ -151,17 +221,19 @@ const OnboardingStep = ({
             </View>
 
             <Button 
-                title={isLastStep ? 'Get Started' : 'Next'}
+                title={isLastStep ? 'Sign in with Google' : 'Next'}
                 onPress={isLastStep ? onGetStarted : onNext}
+                loading={loading}
+                disabled={loading}
             />
 
-            <Text className="text-sm text-foreground text-center">
+            <Text className="text-xs text-foreground text-center">
                 By continuing, you accept our{" "}
                 <Text className="text-black font-bold">Terms & Conditions</Text>{" "}
                 and{" "}
                 <Text className="text-black font-bold">Privacy Policy</Text>.
             </Text>
-        </Animated.View>
+        </View>
     );
 };
 

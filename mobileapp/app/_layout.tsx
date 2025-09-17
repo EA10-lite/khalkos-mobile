@@ -1,7 +1,9 @@
+import AppInitializer from "@/src/components/AppInitializer";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ActivityIndicator, View } from "react-native";
+import FlashMessage from "react-native-flash-message";
 import "../global.css";
 
 export default function RootLayout() {
@@ -21,12 +23,17 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <AppInitializer>
       <StatusBar style="dark" backgroundColor="white" />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="onboarding" />
         <Stack.Screen name="index" />
+        <Stack.Screen name="onboarding" />
+        <Stack.Screen name="get-started" />
+        <Stack.Screen name="pin-setup" />
+        <Stack.Screen name="wallet-unlock" />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
-    </>
+      <FlashMessage position="top" />
+    </AppInitializer>
   );
 }

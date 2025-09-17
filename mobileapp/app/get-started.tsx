@@ -1,13 +1,33 @@
+import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Stargrey from "@/assets/images/star-grey.svg";
 import Star from "@/assets/images/star.svg";
+import SecureStorage from "@/src/services/security/SecureStorage";
 import { Button } from "@/src/shared";
 import { router } from "expo-router";
 
 const GetStarted = () => {
     const insets = useSafeAreaInsets();
+    const [hasPinSet, setHasPinSet] = useState(false);
+
+    useEffect(() => {
+        checkPinStatus();
+    }, []);
+
+    const checkPinStatus = async () => {
+        const pinExists = await SecureStorage.hasPinSet();
+        setHasPinSet(pinExists);
+    };
+
+    const handleContinue = () => {
+        if (hasPinSet) {
+            router.replace("/(tabs)/home");
+        } else {
+            router.push("/pin-setup" as any);
+        }
+    };
 
     return (
         <View 
@@ -59,8 +79,8 @@ const GetStarted = () => {
                 </View>
 
                 <Button 
-                    title="View wallet"
-                    onPress={() => router.replace("/(tabs)/home")}
+                    title={hasPinSet ? "View wallet" : "Set up security"}
+                    onPress={handleContinue}
                 />
             </View>
         </View>
