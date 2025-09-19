@@ -90,7 +90,7 @@ pub mod KhalkosV1 {
             self.erc20_addr.read().transfer_from(caller, recipient, spend_amount);
 
             let mut shares = 0;
-
+            
             // Deposit yield amount to specified vault
             if yield_amount > 0 {
                 shares = self._deposit_to_vault(token, vault, yield_amount, caller);

@@ -1,6 +1,26 @@
-console.log('Hello from TypeScript backend!');
+import cors from 'cors';
+import express from 'express';
+import { auth } from './auth';
 
-// Basic Express server setup (you can install express later)
-const PORT = process.env['PORT'] || 3000;
+const app = express();
+const PORT = process.env['PORT'] || 3001;
 
-console.log(`Server would run on port ${PORT}`);
+// Middleware
+app.use(cors({
+  origin: ['http://localhost:8081', 'paycrypt://'],
+  credentials: true,
+}));
+app.use(express.json());
+
+// Better Auth routes
+app.use('/api/auth', auth.handler);
+
+// Health check
+app.get('/health', (_, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Auth server running on http://localhost:${PORT}`);
+  console.log(`📱 Mobile app should connect to http://localhost:${PORT}/api/auth`);
+});
