@@ -5,6 +5,7 @@ import {
   DiscoveryDocument,
   useAuthRequest
 } from 'expo-auth-session';
+import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import * as jose from 'jose';
 import * as React from 'react';
@@ -18,7 +19,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 const AuthContext = React.createContext({
   user: null as AuthUser | null,
-  signIn: () => {},
+  signIn: () => Promise.resolve() as Promise<any>,
   signOut: () => {},
   fetchWithAuth: (url: string, options: RequestInit) =>
     Promise.resolve(new Response()),
@@ -42,17 +43,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = React.useState<string | null>(null);
   const [refreshToken, setRefreshToken] = React.useState<string | null>(null);
   const [request, response, promptAsync] = useAuthRequest(config, discovery);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState<AuthError | null>(null);
   const isWeb = Platform.OS === 'web';
   const refreshInProgressRef = React.useRef(false);
   const walletManager = StarknetWalletManager.getInstance();
+  const router = useRouter();
+  const authPromiseRef = React.useRef<{
+    resolve: (value: any) => void;
+    reject: (error: any) => void;
+  } | null>(null);
 
   React.useEffect(() => {
     handleResponse();
   }, [response]);
 
-  // Check if user is authenticated
   React.useEffect(() => {
     const restoreSession = async () => {
       setIsLoading(true);
@@ -240,20 +245,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             });
 
             await handleNativeTokens(tokens);
+            
+            // Resolve the promise with wallet data
+            if (authPromiseRef.current) {
+              authPromiseRef.current.resolve(walletData);
+              authPromiseRef.current = null;
+            }
           } catch (walletError) {
             console.error(`walletError:  ${walletError instanceof Error ? walletError.message : String(walletError)}`);
+            // Reject the promise with wallet error
+            if (authPromiseRef.current) {
+              authPromiseRef.current.reject(walletError);
+              authPromiseRef.current = null;
+            }
+          }
+        } else {
+          // No idToken, still handle auth tokens
+          await handleNativeTokens(tokens);
+          if (authPromiseRef.current) {
+            authPromiseRef.current.resolve({ message: 'Authentication successful' });
+            authPromiseRef.current = null;
           }
         }
         
       } catch (e) {
         console.error('Error handling auth response:', e);
+        // Reject the promise with general error
+        if (authPromiseRef.current) {
+          authPromiseRef.current.reject(e);
+          authPromiseRef.current = null;
+        }
       } finally {
         setIsLoading(false);
       }
     } else if (response?.type === 'cancel') {
-      alert('Sign in cancelled');
+      // Reject the promise with cancel error
+      if (authPromiseRef.current) {
+        authPromiseRef.current.reject(new Error('Sign in cancelled'));
+        authPromiseRef.current = null;
+      }
     } else if (response?.type === 'error') {
       setError(response?.error as AuthError);
+      // Reject the promise with auth error
+      if (authPromiseRef.current) {
+        authPromiseRef.current.reject(response?.error);
+        authPromiseRef.current = null;
+      }
     }
   }
 
@@ -287,21 +324,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async () => {
     console.log('signIn');
-    try {
+    
+    return new Promise((resolve, reject) => {
       if (!request) {
         console.log('No request');
+        reject(new Error('Auth request not initialized'));
         return;
       }
 
       console.log('request', request);
 
+      authPromiseRef.current = { resolve, reject };
+
       setIsLoading(true);
-      await promptAsync();
-    } catch (e) {
-      console.log(e);
-      setIsLoading(false);
-      throw e;
-    }
+      
+      // Start the auth flow
+      promptAsync().catch((error) => {
+        setIsLoading(false);
+        if (authPromiseRef.current) {
+          authPromiseRef.current.reject(error);
+          authPromiseRef.current = null;
+        }
+      });
+    });
   };
 
   const signOut = async () => {
@@ -314,6 +359,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
+
+    router.replace('/(onboarding)/onboarding');
   };
 
   return (

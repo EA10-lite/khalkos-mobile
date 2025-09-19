@@ -1,7 +1,6 @@
 import Logo from "@/assets/images/logo.svg";
 import { useAuth } from "@/src/features/auth/providers/auth";
 import SecureStorage from "@/src/features/auth/services/SecureStorage";
-import StarknetWalletManager from "@/src/features/wallet/services/StarknetWalletManager";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect } from "react";
@@ -14,16 +13,7 @@ export default function Index() {
   useEffect(() => {
     const bootstrap = async () => {
       try {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        const walletManager = StarknetWalletManager.getInstance();
-        const walletExists = await walletManager.initialize();
-
-        if(isLoading){
-          return null
-        }
-        
-        if (walletExists && user) {
+        if (user) {
 
           const hasPinSet = await SecureStorage.hasPinSet();
           
@@ -46,8 +36,16 @@ export default function Index() {
       }
     };
 
-    bootstrap();
-  }, []); 
+    if(isLoading){
+      console.log("isLoading", isLoading);
+      console.log("user", user);
+      return;
+    }else{
+      console.log("isLoading", isLoading);
+      console.log("user", user);
+      bootstrap();
+    }
+  }, [isLoading]); 
   
   return (
     <View className="flex-1 items-center justify-center bg-white">

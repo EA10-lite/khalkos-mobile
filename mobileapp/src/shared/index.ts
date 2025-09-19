@@ -13,7 +13,7 @@ export * from './hooks';
 export * from './utils';
 
 // Constants
-export * from './constants';
+export * from './constants/tokens';
 
 // Theme
 export * from './theme';

@@ -48,7 +48,7 @@ class StarknetWalletManager {
   private wallet: StoredWalletData | null = null;
   private account: Account | null = null;
   private supportedTokens: TokenInfo[] = [];
-  private static readonly APP_SALT = process.env.EXPO_PRIVATE_SALT;
+  private static readonly APP_SALT = process.env.EXPO_PUBLIC_SALT;
   private static readonly OZ_ACCOUNT_CLASS_HASH = process.env.EXPO_PUBLIC_OZ_ACCOUNT_CLASS_HASH;
 
   private constructor() {
@@ -264,9 +264,6 @@ class StarknetWalletManager {
 
   async authenticateAndUnlock(): Promise<StoredWalletData | null> {
     try {
-      if (!this.wallet) {
-        throw new Error('No wallet found. Please login first.');
-      }
 
       const authenticatedWallet = await SecureStorage.getStoredWallet(false); // Temporarily disabled auth for development
       if (!authenticatedWallet) {
@@ -448,10 +445,10 @@ class StarknetWalletManager {
     if (!this.wallet) {
       throw new Error('No wallet found. Please login first.');
     }
-
+    console.log("avnu_api_key", process.env.EXPO_PUBLIC_AVNU_API_KEY)
     const myPaymasterRpc = new PaymasterRpc({
       nodeUrl: process.env.EXPO_PUBLIC_SEPOLIA_AVNU_RPC,
-      headers: { 'api-key': process.env.EXPO_PRIVATE_AVNU_API_KEY },
+      headers: { 'x-paymaster-api-key': process.env.EXPO_PUBLIC_AVNU_API_KEY },
     });
     
 
@@ -477,7 +474,7 @@ class StarknetWalletManager {
       } as const;
 
       const paymasterDetails = {
-        feeMode: { mode: "sponsored" as const }, // Use sponsored mode for free deployment
+        feeMode: { mode: "sponsored" as const }, 
         deploymentData,
       };
   
@@ -517,6 +514,7 @@ class StarknetWalletManager {
       
       return response && response.length > 0;
     } catch (error) {
+      console.log(error)
       return false;
     }
   }

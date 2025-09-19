@@ -93,6 +93,7 @@ class SecureStorage {
     requireAuth: boolean = true,
   ): Promise<StoredWalletData | null> {
     try {
+      console.log("testing")
       const options = requireAuth
         ? {
             requireAuthentication: true,
@@ -104,6 +105,8 @@ class SecureStorage {
         this.WALLET_KEY,
         options,
       );
+
+      console.log("storedData", storedData);
 
       if (storedData) {
         const walletData = JSON.parse(storedData) as StoredWalletData;

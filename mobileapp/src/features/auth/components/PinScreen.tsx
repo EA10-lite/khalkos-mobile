@@ -245,7 +245,7 @@ const PinScreen: React.FC<PinScreenProps> = ({
           <View key={rowIndex} className="flex-row justify-between mb-4">
             {row.map((item, itemIndex) => {
               if (item === '') {
-                return <View key={itemIndex} className="w-16 h-16" />;
+                return <View key={itemIndex} className="w-20 h-20" />;
               }
 
               if (item === 'backspace') {
@@ -253,7 +253,7 @@ const PinScreen: React.FC<PinScreenProps> = ({
                   <TouchableOpacity
                     key={itemIndex}
                     onPress={handleBackspace}
-                    className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center"
+                    className="w-20 h-20 rounded-full bg-gray-100 items-center justify-center"
                     disabled={loading}
                   >
                     <Ionicons name="backspace-outline" size={24} color="#333" />
@@ -265,7 +265,7 @@ const PinScreen: React.FC<PinScreenProps> = ({
                 <TouchableOpacity
                   key={itemIndex}
                   onPress={() => handleNumberPress(item)}
-                  className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center"
+                  className="w-20 h-20 rounded-full bg-gray-100 items-center justify-center"
                   disabled={loading}
                 >
                   <Text className="text-xl font-semibold text-black">
@@ -299,7 +299,7 @@ const PinScreen: React.FC<PinScreenProps> = ({
   };
 
   return (
-    <View className="flex-1 bg-white px-6 py-8">
+    <View className="flex-1 bg-white px-10 py-10">
       {/* Header */}
       <View className="items-center mb-8">
         <Text className="text-2xl font-bold text-black mb-2">{getTitle()}</Text>
@@ -335,15 +335,6 @@ const PinScreen: React.FC<PinScreenProps> = ({
       <View className="flex-1 items-center justify-center">
         {renderNumberPad()}
       </View>
-
-      {/* Cancel Button */}
-      <TouchableOpacity
-        onPress={onCancel}
-        className="items-center py-4"
-        disabled={loading}
-      >
-        <Text className="text-gray-600 text-base">Cancel</Text>
-      </TouchableOpacity>
     </View>
   );
 };
