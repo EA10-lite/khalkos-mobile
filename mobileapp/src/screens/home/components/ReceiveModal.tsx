@@ -1,4 +1,4 @@
-import { Token } from "@/src/interfaces/token";
+import { Token } from "@/src/shared/constants/tokens";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Clipboard from 'expo-clipboard';
 import { Alert, Image, Share, Text, TouchableOpacity, View } from "react-native";
