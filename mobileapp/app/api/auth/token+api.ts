@@ -1,37 +1,16 @@
 import {
-    COOKIE_MAX_AGE,
-    COOKIE_NAME,
-    COOKIE_OPTIONS,
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-    GOOGLE_REDIRECT_URI,
-    JWT_EXPIRATION_TIME,
-    JWT_SECRET,
-    REFRESH_COOKIE_NAME,
-    REFRESH_COOKIE_OPTIONS,
-    REFRESH_TOKEN_EXPIRY,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI,
+  JWT_EXPIRATION_TIME,
+  JWT_SECRET,
+  REFRESH_TOKEN_EXPIRY
 } from '@/src/features/auth/utils/constants';
 import * as jose from "jose";
 
 export async function POST(request: Request) {
   const body = await request.formData();
-  // Convert FormData to object for React Native compatibility
-  const formDataObj: Record<string, string> = {};
-  const parts = body.getParts();
-  
-  parts.forEach(part => {
-    if ('string' in part) {
-      // Extract key from headers (typically in Content-Disposition)
-      const contentDisposition = part.headers['content-disposition'] || part.headers['Content-Disposition'];
-      const nameMatch = contentDisposition?.match(/name="([^"]+)"/);
-      if (nameMatch) {
-        formDataObj[nameMatch[1]] = part.string;
-      }
-    }
-  });
-  
-  const code = formDataObj.code;
-  const platform = formDataObj.platform || "native"; // Default to native if not specified
+  const code = body.get("code") as string | null;
 
   if (!code) {
     return Response.json(
@@ -116,43 +95,11 @@ export async function POST(request: Request) {
     );
   }
 
-  // Handle web platform with cookies
-  if (platform === "web") {
-    // Create a response with the token in the body
-    const response = Response.json({
-      success: true,
-      issuedAt: issuedAt,
-      expiresAt: issuedAt + COOKIE_MAX_AGE,
-    });
-
-    // Set the access token in an HTTP-only cookie
-    response.headers.set(
-      "Set-Cookie",
-      `${COOKIE_NAME}=${accessToken}; Max-Age=${COOKIE_OPTIONS.maxAge}; Path=${
-        COOKIE_OPTIONS.path
-      }; ${COOKIE_OPTIONS.httpOnly ? "HttpOnly;" : ""} ${
-        COOKIE_OPTIONS.secure ? "Secure;" : ""
-      } SameSite=${COOKIE_OPTIONS.sameSite}`
-    );
-
-    // Set the refresh token in a separate HTTP-only cookie
-    response.headers.append(
-      "Set-Cookie",
-      `${REFRESH_COOKIE_NAME}=${refreshToken}; Max-Age=${
-        REFRESH_COOKIE_OPTIONS.maxAge
-      }; Path=${REFRESH_COOKIE_OPTIONS.path}; ${
-        REFRESH_COOKIE_OPTIONS.httpOnly ? "HttpOnly;" : ""
-      } ${REFRESH_COOKIE_OPTIONS.secure ? "Secure;" : ""} SameSite=${
-        REFRESH_COOKIE_OPTIONS.sameSite
-      }`
-    );
-
-    return response;
-  }
 
   // For native platforms, return both tokens in the response body
   return Response.json({
     accessToken,
     refreshToken,
+    idToken: data.id_token
   });
 }

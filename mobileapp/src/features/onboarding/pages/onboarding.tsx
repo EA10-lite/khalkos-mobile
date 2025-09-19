@@ -2,7 +2,6 @@ import Illustration from "@/assets/images/illustration.svg";
 import { useAuth } from "@/src/features/auth/providers/auth";
 import { StarknetWalletManager } from "@/src/features/wallet";
 import { Button } from "@/src/shared/components";
-import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Text, View } from "react-native";
 import { showMessage } from "react-native-flash-message";
@@ -50,6 +49,7 @@ const Onboarding = () => {
             // Attempt Google sign-in and wallet creation
         
             const walletData = await signIn();
+            console.log(walletData);
             
             showMessage({
                 message: 'Wallet Created!',
@@ -58,9 +58,9 @@ const Onboarding = () => {
                 duration: 3000,
             });
             
-            setTimeout(() => {
-                router.push('/(onboarding)/get-started' as any);
-            }, 1500);
+            // setTimeout(() => {
+            //     router.push('/(onboarding)/get-started' as any);
+            // }, 1500);
         } catch (error: any) {
             console.log('error', error);
             showMessage({

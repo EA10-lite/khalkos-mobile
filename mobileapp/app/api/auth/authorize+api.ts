@@ -48,6 +48,8 @@ import { APP_SCHEME, BASE_URL, GOOGLE_AUTH_URL, GOOGLE_CLIENT_ID } from "@/src/f
       state: state,
       prompt: "select_account",
     });
+
+    console.log(GOOGLE_AUTH_URL + "?" + params.toString())
   
     return Response.redirect(GOOGLE_AUTH_URL + "?" + params.toString());
   }

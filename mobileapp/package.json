@@ -12,6 +12,7 @@
     "fmt": "prettier --write ."
   },
   "dependencies": {
+    "@avnu/gasless-sdk": "^0.1.8",
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
@@ -53,7 +54,7 @@
     "react-native-svg-transformer": "^1.5.1",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.5.1",
-    "starknet": "^6.11.0",
+    "starknet": "^7.6.4",
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {

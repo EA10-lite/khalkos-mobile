@@ -1,6 +1,6 @@
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
-import { WalletData } from '../../wallet/services/WalletGenerator';
+import { WalletData } from '../../wallet/services/StarknetWalletManager';
 
 export interface StoredWalletData extends WalletData {
   createdAt: number;
@@ -79,7 +79,7 @@ class SecureStorage {
         this.WALLET_KEY,
         JSON.stringify(dataToStore),
         {
-          requireAuthentication: true,
+          requireAuthentication: false, // Temporarily disabled for development
           authenticationPrompt: 'Authenticate to save your wallet',
         },
       );

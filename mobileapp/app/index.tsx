@@ -1,7 +1,7 @@
 import Logo from "@/assets/images/logo.svg";
 import { useAuth } from "@/src/features/auth/providers/auth";
+import SecureStorage from "@/src/features/auth/services/SecureStorage";
 import StarknetWalletManager from "@/src/features/wallet/services/StarknetWalletManager";
-import SecureStorage from "@/src/services/security/SecureStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect } from "react";
@@ -24,14 +24,12 @@ export default function Index() {
         }
         
         if (walletExists && user) {
-          // Check if PIN is set up
+
           const hasPinSet = await SecureStorage.hasPinSet();
           
           if (hasPinSet) {
-            // Wallet exists and PIN is set - redirect to unlock screen
             router.replace('/(auth)/wallet-unlock' as any);
           } else {
-            // Wallet exists but no PIN - redirect to PIN setup
             router.replace('/(auth)/pin-setup' as any);
           }
         } else {

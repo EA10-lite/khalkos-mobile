@@ -1,5 +1,6 @@
 import { APP_SCHEME, BASE_URL } from "@/src/features/auth/utils/constants";
 export async function GET(request: Request) {
+  console.log("callback");
   const incomingParams = new URLSearchParams(request.url.split("?")[1]);
   const combinedPlatformAndState = incomingParams.get("state");
   if (!combinedPlatformAndState) {
