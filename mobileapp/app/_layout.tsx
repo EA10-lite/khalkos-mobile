@@ -1,11 +1,9 @@
 import { AuthProvider } from '@/src/features/auth/providers/auth';
-import { AppInitializer } from '@/src/shared/components';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
-
 import '../global.css';
 
 export default function RootLayout() {
@@ -26,7 +24,6 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <AppInitializer>
         <StatusBar style="dark" backgroundColor="white" />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
@@ -35,7 +32,6 @@ export default function RootLayout() {
           <Stack.Screen name="(main)" options={{ headerShown: false }} />
         </Stack>
         <FlashMessage position="top" />
-      </AppInitializer>
     </AuthProvider>
   );
 }

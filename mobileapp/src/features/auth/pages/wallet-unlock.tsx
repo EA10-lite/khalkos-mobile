@@ -26,10 +26,8 @@ const WalletUnlock = () => {
 
   const handleUnlockSuccess = async () => {
     try {
-      // Authenticate and unlock the wallet
       await walletManager.authenticateAndUnlock();
       
-      // Navigate to home
       router.replace('/(main)/(tabs)/home' as any);
     } catch (error: any) {
       showMessage({

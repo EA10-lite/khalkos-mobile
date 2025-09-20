@@ -2,15 +2,14 @@
  * Onboarding feature type definitions
  */
 
-export interface OnboardingState {
-  currentStep: number;
-  totalSteps: number;
-  isCompleted: boolean;
-  hasSeenOnboarding: boolean;
-}
-
-export interface OnboardingStep {
+export type OnboardingStepProps = {
   title: string;
   description: string;
-  illustration?: string;
-}
+  step: number;
+  totalSteps: number;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  onGetStarted?: () => void;
+  isLastStep: boolean;
+  loading?: boolean;
+};

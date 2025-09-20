@@ -12,7 +12,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import SecureStorage from '../services/SecureStorage';
 import { tokenCache } from '../utils/cache';
-import { BASE_URL } from '../utils/constants';
+import { APP_SCHEME, BASE_URL } from '../utils/constants';
 import { AuthUser } from '../utils/middleware';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -30,7 +30,7 @@ const AuthContext = React.createContext({
 const config: AuthRequestConfig = {
   clientId: 'google',
   scopes: ['openid', 'profile', 'email'],
-  redirectUri: 'exp://e4a6168ac4ad.ngrok-free.app'
+  redirectUri: APP_SCHEME!
 };
 
 const discovery: DiscoveryDocument = {

@@ -33,3 +33,13 @@ export interface WalletConfig {
   network: 'mainnet' | 'testnet';
   rpcUrl: string;
 }
+
+export interface Token {
+  address: string;
+  image: string;
+  name: string;
+  tokenPrice: string;
+  symbol: string;
+  tokenBalance: string;
+  balanceValue: string;
+}

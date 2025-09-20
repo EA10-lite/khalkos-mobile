@@ -14,7 +14,7 @@ export { default as WalletUnlockPage } from './pages/wallet-unlock';
 export { default as SecureStorage } from './services/SecureStorage';
 
 // Hooks
-export { useAuth, usePin } from './hooks';
+export { usePin } from './hooks';
 
 // Utils
 export { tokenCache } from './utils/cache';

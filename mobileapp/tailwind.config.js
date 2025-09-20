@@ -12,7 +12,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#3B82F6",
+        primary: "#304FFF",
         purple: "#B01EFF",
         "purple-light": "#E1467C",
         secondary: "#EFF6FF",

@@ -1,4 +1,4 @@
-import { EnterPin } from "@/src/shared/main";
+import { EnterPin } from "@/src/shared/components";
 import { Ionicons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Image, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -31,15 +31,10 @@ const TOKENS = [
         balanceValue: "$10",
     },
 ]
-
-
-
-
 interface SendModalProps {
     isVisible: boolean;
     onClose: () => void;
 }
-
 
 type TokenProps = {
     image: string;

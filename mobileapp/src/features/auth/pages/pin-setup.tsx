@@ -19,7 +19,6 @@ const PinSetup = () => {
 
       setStep('success');
       
-      // Navigate to home after a short delay
       setTimeout(() => {
         router.replace('/(main)/(tabs)/home' as any);
       }, 2000);

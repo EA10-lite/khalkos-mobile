@@ -8,12 +8,9 @@ import { APP_SCHEME, BASE_URL, GOOGLE_AUTH_URL, GOOGLE_CLIENT_ID } from "@/src/f
         { status: 500 }
       );
     }
-  
     const url = new URL(request.url);
     let idpClientId: string;
-  
     const internalClient = url.searchParams.get("client_id");
-  
     const redirectUri = url.searchParams.get("redirect_uri");
   
     let platform;
@@ -49,7 +46,7 @@ import { APP_SCHEME, BASE_URL, GOOGLE_AUTH_URL, GOOGLE_CLIENT_ID } from "@/src/f
       prompt: "select_account",
     });
 
-    console.log(GOOGLE_AUTH_URL + "?" + params.toString())
+    //console.log(GOOGLE_AUTH_URL + "?" + params.toString())
   
     return Response.redirect(GOOGLE_AUTH_URL + "?" + params.toString());
   }

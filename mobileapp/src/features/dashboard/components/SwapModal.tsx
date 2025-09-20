@@ -163,7 +163,7 @@ const SwapForm = ({selectedToken, setSelectedToken, toToken, setToToken}: SwapFo
 
                 <View className="mt-[-24px] left-[50%] z-50 ml-[-24px]">
                     <View className="bg-white w-10 h-10 rounded-full items-center justify-center shadow-sm border border-[#eee]">
-                        <MaterialCommunityIcons name="swap-vertical" size={24} color="#3B82F6" />
+                        <MaterialCommunityIcons name="swap-vertical" size={24} color="#304FFF" />
                     </View>
                 </View>
 

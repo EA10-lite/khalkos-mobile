@@ -5,7 +5,7 @@
 
 export const colors = {
   // Primary colors
-  primary: '#8B5CF6', // purple
+  primary: '#304FFF', // purple
   primaryLight: '#A78BFA',
   primaryDark: '#7C3AED',
   
@@ -29,7 +29,7 @@ export const colors = {
   success: '#10B981',
   warning: '#F59E0B',
   error: '#EF4444',
-  info: '#3B82F6',
+  info: '#304FFF',
   
   // Background colors
   background: '#FFFFFF',

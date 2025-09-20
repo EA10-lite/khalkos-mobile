@@ -93,7 +93,6 @@ class SecureStorage {
     requireAuth: boolean = true,
   ): Promise<StoredWalletData | null> {
     try {
-      console.log("testing")
       const options = requireAuth
         ? {
             requireAuthentication: true,
