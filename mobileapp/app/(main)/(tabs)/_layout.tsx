@@ -1,5 +1,9 @@
-import { Entypo } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import ChatIcon from "@/assets/images/icons/chat.svg";
+import SendIcon from "@/assets/images/icons/send.svg";
+import SwapIcon from "@/assets/images/icons/swap.svg";
+import UserIcon from "@/assets/images/icons/user.svg";
+import WalletIcon from "@/assets/images/icons/wallet.svg";
 
 
 const TabLayout = () => {
