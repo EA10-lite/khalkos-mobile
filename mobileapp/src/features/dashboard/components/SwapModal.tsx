@@ -1,4 +1,4 @@
-import { EnterPin } from "@/src/shared/main";
+import { EnterPin } from "@/src/shared";
 import { Ionicons, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Image, Modal, Text, TextInput, TouchableOpacity, View } from "react-native";

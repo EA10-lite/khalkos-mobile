@@ -1,4 +1,4 @@
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
 
@@ -30,15 +30,6 @@ const TabLayout = () => {
                     title: "Home",
                     tabBarIcon: ({ color, size }) => (
                         <Entypo name="wallet" size={24} color={color} />
-                    ),
-                }} 
-            />
-            <Tabs.Screen 
-                name="settings" 
-                options={{
-                    title: "Settings",
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="time" size={24} color={color} />
                     ),
                 }} 
             />

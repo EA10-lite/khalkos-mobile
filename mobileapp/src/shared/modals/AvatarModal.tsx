@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Modal from "react-native-modal";
-import { Button } from "../main/";
+import Button from "../components/Button";
 
 import Avatar1 from "@/assets/images/Avatar.svg";
 import Avatar2 from "@/assets/images/Avatar2.svg";

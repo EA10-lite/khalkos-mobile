@@ -13,6 +13,8 @@ export interface TokenBalance {
   token: TokenInfo;
   balance: string;
   formattedBalance: string;
+  usdPrice?: number;
+  usdValue?: number;
 }
 
 export interface WalletManagerState {
@@ -55,11 +57,11 @@ class StarknetWalletManager {
     this.provider = new RpcProvider({
       nodeUrl: process.env.EXPO_PUBLIC_SEPOLIA_RPC,
     });
-    this.strk_contract_address = process.env.EXPO_PUBLIC_STARK_CONTRACT_ADDRESS!;
-    this.strk_usdt_contract_address = process.env.EXPO_PUBLIC_STARK_USDT_CONTRACT_ADDRESS!;
-    this.strk_usdc_contract_address = process.env.EXPO_PUBLIC_STARK_USDC_CONTRACT_ADDRESS!;
-    this.strk_wbtc_contract_address = process.env.EXPO_PUBLIC_STARK_WBTC_CONTRACT_ADDRESS!;
-    this.strk_eth_contract_address = process.env.EXPO_PUBLIC_STARK_ETH_CONTRACT_ADDRESS!;
+    this.strk_contract_address = process.env.EXPO_PUBLIC_STARK_SEPOLIA_CONTRACT_ADDRESS!;
+    this.strk_usdt_contract_address = process.env.EXPO_PUBLIC_STARK_SEPOLIA_USDT_CONTRACT_ADDRESS!;
+    this.strk_usdc_contract_address = process.env.EXPO_PUBLIC_STARK_SEPOLIA_USDC_CONTRACT_ADDRESS!;
+    this.strk_wbtc_contract_address = process.env.EXPO_PUBLIC_STARK_SEPOLIA_WBTC_CONTRACT_ADDRESS!;
+    this.strk_eth_contract_address = process.env.EXPO_PUBLIC_STARK_SEPOLIA_ETH_CONTRACT_ADDRESS!;
 
     this.initializeSupportedTokens();
   }
@@ -196,11 +198,16 @@ class StarknetWalletManager {
         OZaccountConstructorCallData,
         0
       );
+
+      // Ensure address is properly padded to 66 characters (0x + 64 hex chars)
+      const paddedAddress = OZcontractAddress.length < 66 
+        ? '0x' + OZcontractAddress.slice(2).padStart(64, '0')
+        : OZcontractAddress;
       
       return {
         privateKey,
         publicKey,
-        address: OZcontractAddress,
+        address: paddedAddress,
         calldata: OZaccountConstructorCallData
       };
     } catch (error: any) {
@@ -308,7 +315,14 @@ class StarknetWalletManager {
     if (!this.wallet) return null;
 
     const { privateKey, ...safeWalletInfo } = this.wallet;
-    return safeWalletInfo;
+
+    // Ensure address is properly padded for existing wallets
+    const paddedAddress = this.ensureAddressPadding(safeWalletInfo.address);
+
+    return {
+      ...safeWalletInfo,
+      address: paddedAddress
+    };
   }
 
   getAccount(): Account | null {
@@ -440,6 +454,80 @@ class StarknetWalletManager {
     return [...this.supportedTokens];
   }
 
+  // Fetch token prices from CoinGecko
+  private async fetchTokenPrices(): Promise<{ [key: string]: number }> {
+    try {
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum,starknet,tether,usd-coin,wrapped-bitcoin&vs_currencies=usd`
+      );
+      const data = await response.json();
+      
+      // Map symbols to CoinGecko IDs
+      const priceMap: { [key: string]: number } = {
+        'ETH': data.ethereum?.usd || 0,
+        'STRK': data.starknet?.usd || 0,
+        'USDT': data.tether?.usd || 0,
+        'USDC': data['usd-coin']?.usd || 0,
+        'WBTC': data['wrapped-bitcoin']?.usd || 0,
+      };
+
+      console.log("priceMap", priceMap)
+      
+      return priceMap;
+    } catch (error) {
+      console.error('Failed to fetch token prices:', error);
+      return {};
+    }
+  }
+
+  // Get all token balances with USD values
+  async getAllTokenBalancesWithPrices(): Promise<{ balances: TokenBalance[], totalUSD: number, priceDataFailed: boolean }> {
+    if (!this.account) {
+      throw new Error('Not authenticated. Please unlock your wallet.');
+    }
+
+    try {
+      // Fetch balances and prices in parallel
+      const [balances, prices] = await Promise.all([
+        this.getAllTokenBalances(),
+        this.fetchTokenPrices()
+      ]);
+
+      // Check if all prices are 0 (API failure)
+      const priceValues = Object.values(prices);
+      const allPricesZero = priceValues.length > 0 && priceValues.every(price => price === 0);
+      
+      console.log('Price data status:', { 
+        prices, 
+        allPricesZero,
+        priceCount: priceValues.length 
+      });
+
+      // Calculate USD values
+      let totalUSD = 0;
+      const balancesWithUSD = balances.map((balance) => {
+        const price = prices[balance.token.symbol] || 0;
+        const balanceNumber = parseFloat(balance.formattedBalance) || 0;
+        const usdValue = balanceNumber * price;
+        totalUSD += usdValue;
+
+        return {
+          ...balance,
+          usdPrice: price,
+          usdValue: usdValue
+        };
+      });
+
+      return {
+        balances: balancesWithUSD,
+        totalUSD: totalUSD,
+        priceDataFailed: allPricesZero
+      };
+    } catch (error: any) {
+      throw new Error(`Failed to get token balances with prices: ${error.message}`);
+    }
+  }
+
   // Deploy wallet manually (if initial deployment failed)
   async deployWallet(calldata: any): Promise<any> {
     if (!this.wallet) {
@@ -519,6 +607,16 @@ class StarknetWalletManager {
     }
   }
 
+  // Helper method to ensure address is properly padded
+  private ensureAddressPadding(address: string): string {
+    if (!address || !address.startsWith('0x')) return address;
+    
+    // Ensure address is properly padded to 66 characters (0x + 64 hex chars)
+    return address.length < 66 
+      ? '0x' + address.slice(2).padStart(64, '0')
+      : address;
+  }
+
   static isValidStarknetAddress(address: string): boolean {
     return /^0x[a-fA-F0-9]{1,64}$/.test(address);
   }
@@ -528,6 +626,23 @@ class StarknetWalletManager {
     if (address.length <= length * 2) return address;
     return `${address.slice(0, length)}...${address.slice(-length)}`;
   }
+
+  static formatUSDValue = (value: number | undefined) => {
+    if (!value || value === 0) return '$0.00';
+    return `$${value.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}`;
+  };
+
+  static formatPrice = (price: number | undefined) => {
+    if (!price || price === 0) return '$0.00';
+    return `$${price.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 6
+    })}`;
+  };
+
 }
 
 export default StarknetWalletManager;
