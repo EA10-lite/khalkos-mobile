@@ -1,7 +1,7 @@
 import ChatIcon from "@/assets/images/icons/chat.svg";
+import HistoryIcon from "@/assets/images/icons/history.svg";
 import SendIcon from "@/assets/images/icons/send.svg";
 import SwapIcon from "@/assets/images/icons/swap.svg";
-import UserIcon from "@/assets/images/icons/user.svg";
 import WalletIcon from "@/assets/images/icons/wallet.svg";
 import { Tabs } from "expo-router";
 
@@ -70,11 +70,11 @@ const TabLayout = () => {
                 }} 
             />
             <Tabs.Screen 
-                name="profile" 
+                name="history" 
                 options={{
-                    title: "Profile",
+                    title: "History",
                     tabBarIcon: ({ color }) => (
-                        <UserIcon width={24} height={24} color={color} />
+                        <HistoryIcon width={24} height={24} color={color} />
                     ),
                 }} 
             />

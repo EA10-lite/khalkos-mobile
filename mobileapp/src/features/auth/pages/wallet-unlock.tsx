@@ -55,7 +55,7 @@ const WalletUnlock = () => {
     >
       {/* Wallet Info Header */}
       {walletInfo && (
-        <View className="px-6 py-4 bg-gray-50">
+        <View className="px-6 py-4 bg-white">
           <Text className="text-sm text-gray-600 text-center">
             Welcome back, {walletInfo.email}
           </Text>

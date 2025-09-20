@@ -5,13 +5,12 @@ import Send from '@/assets/images/send.svg';
 import Swap from '@/assets/images/swap.svg';
 import {
     ReceiveModal,
-    SendModal,
-    SwapModal,
 } from '@/src/features/dashboard/components';
 import StarknetWalletManager from '@/src/features/wallet/services/StarknetWalletManager';
 import { Navbar } from '@/src/shared/components';
 import { Foundation, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
@@ -80,8 +79,6 @@ const Home = () => {
   const [totalUSDValue, setTotalUSDValue] = useState<number>(0);
   const [priceDataFailed, setPriceDataFailed] = useState<boolean>(false);
 
-  const [isSendModalVisible, setIsSendModalVisible] = useState<boolean>(false);
-  const [isSwapModalVisible, setIsSwapModalVisible] = useState<boolean>(false);
   const [isReceiveModalVisible, setIsReceiveModalVisible] =
     useState<boolean>(false);
 
@@ -205,12 +202,12 @@ const Home = () => {
     },
     {
       title: 'Send',
-      onPress: () => setIsSendModalVisible(true),
+      onPress: () => router.push('/(main)/(tabs)/send'),
       icon: <Send />,
     },
     {
       title: 'Swap',
-      onPress: () => setIsSwapModalVisible(true),
+      onPress: () => router.push('/(main)/(tabs)/swap'),
       icon: <Swap />,
     },
     {
@@ -414,17 +411,9 @@ const Home = () => {
         </View>
       </ScrollView>
 
-      <SendModal
-        isVisible={isSendModalVisible}
-        onClose={() => setIsSendModalVisible(false)}
-      />
       <ReceiveModal
         isOpen={isReceiveModalVisible}
         closeModal={() => setIsReceiveModalVisible(false)}
-      />
-      <SwapModal
-        isVisible={isSwapModalVisible}
-        onClose={() => setIsSwapModalVisible(false)}
       />
     </View>
   );
