@@ -63,7 +63,7 @@ const TabLayout = () => {
             <Tabs.Screen 
                 name="chat" 
                 options={{
-                    title: "Chat",
+                    title: "AI Chat",
                     tabBarIcon: ({ color }) => (
                         <ChatIcon width={24} height={24} color={color} />
                     ),

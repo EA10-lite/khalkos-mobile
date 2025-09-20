@@ -4,7 +4,7 @@ import Save from '@/assets/images/save.svg';
 import Send from '@/assets/images/send.svg';
 import Swap from '@/assets/images/swap.svg';
 import {
-    ReceiveModal,
+  ReceiveModal,
 } from '@/src/features/dashboard/components';
 import StarknetWalletManager from '@/src/features/wallet/services/StarknetWalletManager';
 import { Navbar } from '@/src/shared/components';
@@ -277,7 +277,7 @@ const Home = () => {
                 disabled={isAddressCopied}
                 className="flex-row items-center gap-1 mt-2"
               >
-                <Text className="text-white font-medium font-mono text-xs">
+                <Text className="text-white font-medium  text-sm">
                   {walletManager.getWalletInfo()?.address 
                     ? `${walletManager.getWalletInfo()?.address.slice(0, 10)}...${walletManager.getWalletInfo()?.address.slice(-4)}`
                     : 'No address'
