@@ -142,6 +142,23 @@ const Home = () => {
     loadTokenBalances();
   }, []);
 
+  // Set up real-time balance monitoring
+  useEffect(() => {
+    if (!walletManager.isLoggedIn()) return;
+
+    console.log('Setting up balance update listener...');
+    const unsubscribe = walletManager.addBalanceUpdateListener(() => {
+      console.log('Balance update detected, refreshing...');
+      loadTokenBalances(true);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      console.log('Cleaning up balance update listener...');
+      unsubscribe();
+    };
+  }, [walletManager.isLoggedIn()]);
+
   // Debug wallet state in development
   useEffect(() => {
     if (__DEV__) {

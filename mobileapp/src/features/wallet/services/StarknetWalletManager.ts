@@ -52,6 +52,12 @@ class StarknetWalletManager {
   private supportedTokens: TokenInfo[] = [];
   private static readonly APP_SALT = process.env.EXPO_PUBLIC_SALT;
   private static readonly OZ_ACCOUNT_CLASS_HASH = process.env.EXPO_PUBLIC_OZ_ACCOUNT_CLASS_HASH;
+  
+  // Event listeners for balance updates
+  private balanceUpdateListeners: Set<() => void> = new Set();
+  private isPolling: boolean = false;
+  private pollingInterval: number | null = null;
+  private lastKnownBalances: Map<string, string> = new Map();
 
   private constructor() {
     this.provider = new RpcProvider({
@@ -284,6 +290,10 @@ class StarknetWalletManager {
       );
 
       this.wallet = authenticatedWallet;
+      
+      // Initialize balance tracking for real-time updates
+      await this.initializeBalanceTracking();
+      
       return authenticatedWallet;
     } catch (error: any) {
       throw new Error(`Authentication failed: ${error.message}`);
@@ -292,6 +302,10 @@ class StarknetWalletManager {
 
   async logout(): Promise<void> {
     try {
+      // Stop balance polling on logout
+      this.stopBalancePolling();
+      this.lastKnownBalances.clear();
+      
       await SecureStorage.clearAllData();
       this.wallet = null;
       this.account = null;
@@ -625,6 +639,100 @@ class StarknetWalletManager {
     if (!address) return '';
     if (address.length <= length * 2) return address;
     return `${address.slice(0, length)}...${address.slice(-length)}`;
+  }
+
+  // Event listener methods for balance updates
+  addBalanceUpdateListener(callback: () => void): () => void {
+    this.balanceUpdateListeners.add(callback);
+    
+    // Start polling if this is the first listener
+    if (this.balanceUpdateListeners.size === 1 && !this.isPolling) {
+      this.startBalancePolling();
+    }
+    
+    // Return unsubscribe function
+    return () => {
+      this.balanceUpdateListeners.delete(callback);
+      
+      // Stop polling if no more listeners
+      if (this.balanceUpdateListeners.size === 0) {
+        this.stopBalancePolling();
+      }
+    };
+  }
+
+  private startBalancePolling(): void {
+    if (this.isPolling || !this.account) return;
+    
+    console.log('Starting balance polling...');
+    this.isPolling = true;
+    
+    // Poll every 10 seconds
+    this.pollingInterval = setInterval(async () => {
+      await this.checkForBalanceChanges();
+    }, 10000);
+  }
+
+  private stopBalancePolling(): void {
+    if (!this.isPolling) return;
+    
+    console.log('Stopping balance polling...');
+    this.isPolling = false;
+    
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+  }
+
+  private async checkForBalanceChanges(): Promise<void> {
+    if (!this.account) return;
+    
+    try {
+      // Get current balances for comparison
+      const currentBalances = await this.getAllTokenBalances();
+      let hasChanges = false;
+      
+      for (const balance of currentBalances) {
+        const tokenKey = balance.token.symbol;
+        const lastKnownBalance = this.lastKnownBalances.get(tokenKey);
+        
+        if (lastKnownBalance !== balance.balance) {
+          console.log(`Balance change detected for ${tokenKey}: ${lastKnownBalance} -> ${balance.balance}`);
+          this.lastKnownBalances.set(tokenKey, balance.balance);
+          hasChanges = true;
+        }
+      }
+      
+      // Notify listeners if any balance changed
+      if (hasChanges) {
+        console.log('Notifying balance update listeners...');
+        this.balanceUpdateListeners.forEach(callback => {
+          try {
+            callback();
+          } catch (error) {
+            console.error('Error in balance update listener:', error);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error checking balance changes:', error);
+    }
+  }
+
+  // Initialize balance tracking
+  private async initializeBalanceTracking(): Promise<void> {
+    if (!this.account) return;
+    
+    try {
+      const balances = await this.getAllTokenBalances();
+      balances.forEach(balance => {
+        this.lastKnownBalances.set(balance.token.symbol, balance.balance);
+      });
+      console.log('Balance tracking initialized with:', this.lastKnownBalances);
+    } catch (error) {
+      console.error('Failed to initialize balance tracking:', error);
+    }
   }
 
   static formatUSDValue = (value: number | undefined) => {
