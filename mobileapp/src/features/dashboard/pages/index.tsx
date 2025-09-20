@@ -310,7 +310,7 @@ const Home = () => {
         {/* Promotional Banner */}
         {showPromoBanner && (
           <View className="">
-            <View className="bg-primary relative px-6 p-4">
+            <View className="bg-primary relative mx-6 p-4 rounded-2xl">
               <TouchableOpacity
                 className="absolute right-6 top-3 z-10"
                 onPress={() => setShowPromoBanner(false)}
