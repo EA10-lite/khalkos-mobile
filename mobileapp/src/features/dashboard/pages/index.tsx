@@ -5,12 +5,14 @@ import Send from '@/assets/images/send.svg';
 import Swap from '@/assets/images/swap.svg';
 import {
   ReceiveModal,
+  SavingsModal,
 } from '@/src/features/dashboard/components';
 import StarknetWalletManager from '@/src/features/wallet/services/StarknetWalletManager';
 import { Navbar } from '@/src/shared/components';
 import { Foundation, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
@@ -81,8 +83,23 @@ const Home = () => {
 
   const [isReceiveModalVisible, setIsReceiveModalVisible] =
     useState<boolean>(false);
+  const [isSavingsModalVisible, setIsSavingsModalVisible] =
+    useState<boolean>(false);
+  const [savingsPercentage, setSavingsPercentage] = useState<number | undefined>(undefined);
 
   const walletManager = StarknetWalletManager.getInstance();
+
+  // Load savings percentage from secure storage
+  const loadSavingsPercentage = async () => {
+    try {
+      const savedPercentage = await SecureStore.getItemAsync('savingsPercentage');
+      if (savedPercentage) {
+        setSavingsPercentage(parseFloat(savedPercentage));
+      }
+    } catch (error) {
+      console.error('Error loading savings percentage:', error);
+    }
+  };
 
   // Initialize wallet manager if needed
   const initializeWalletManager = async () => {
@@ -137,6 +154,7 @@ const Home = () => {
 
   useEffect(() => {
     loadTokenBalances();
+    loadSavingsPercentage();
   }, []);
 
   // Set up real-time balance monitoring
@@ -170,6 +188,16 @@ const Home = () => {
   // Handle pull-to-refresh
   const onRefresh = () => {
     loadTokenBalances(true);
+  };
+
+  // Handle savings percentage update
+  const handleSavingsPercentageSet = (percentage: number) => {
+    setSavingsPercentage(percentage);
+    showMessage({
+      message: 'Savings Percentage Set!',
+      description: `You'll now save ${percentage}% automatically and earn more rewards`,
+      type: 'success',
+    });
   };
 
   const copyAddressToClipboard = async () => {
@@ -305,19 +333,8 @@ const Home = () => {
         </View>
 
         {/* Promotional Banner */}
-        {showPromoBanner && (
           <View className="">
             <View className="bg-primary relative mx-6 p-4 rounded-2xl">
-              <TouchableOpacity
-                className="absolute right-6 top-3 z-10"
-                onPress={() => setShowPromoBanner(false)}
-              >
-                <MaterialCommunityIcons
-                  name="close"
-                  size={20}
-                  color={'#FFFFFF'}
-                />
-              </TouchableOpacity>
 
               <View className="flex-row items-center gap-3 pr-8">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
@@ -330,11 +347,17 @@ const Home = () => {
 
                 <View className="flex-1">
                   <Text className="mb-1 font-medium text-base text-white">
-                    Set your savings % and yield more rewards
+                    {savingsPercentage !== undefined 
+                      ? `You're saving ${savingsPercentage}% - earning more rewards!`
+                      : 'Set your savings % and yield more rewards'
+                    }
                   </Text>
-                  <TouchableOpacity className="flex-row items-center gap-1">
+                  <TouchableOpacity 
+                    className="flex-row items-center gap-1"
+                    onPress={() => setIsSavingsModalVisible(true)}
+                  >
                     <Text className="font-semibold text-sm text-white">
-                      Get started
+                      {savingsPercentage !== undefined ? 'Update percentage' : 'Get started'}
                     </Text>
                     <MaterialCommunityIcons
                       name="arrow-right"
@@ -346,7 +369,6 @@ const Home = () => {
               </View>
             </View>
           </View>
-        )}
 
         <View className="bg-white p-6 pb-20">
           <View className="mb-8 flex-row items-center gap-4">
@@ -414,6 +436,13 @@ const Home = () => {
       <ReceiveModal
         isOpen={isReceiveModalVisible}
         closeModal={() => setIsReceiveModalVisible(false)}
+      />
+
+      <SavingsModal
+        isOpen={isSavingsModalVisible}
+        closeModal={() => setIsSavingsModalVisible(false)}
+        onSavingsPercentageSet={handleSavingsPercentageSet}
+        currentPercentage={savingsPercentage}
       />
     </View>
   );

@@ -1,13 +1,13 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ChatService from '../services/ChatService';
@@ -87,7 +87,7 @@ const ChatScreen = () => {
       >
         <View className="flex-row items-center gap-3">
           <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center">
-            <MaterialCommunityIcons name="robot" size={24} color="#3B82F6" />
+            <MaterialCommunityIcons name="robot" size={24} color="#304FFF" />
           </View>
           <View>
             <Text className="text-xl font-bold text-black">Khalkos AI</Text>
@@ -166,7 +166,7 @@ const MessageBubble = ({ message, isTyping = false }: MessageBubbleProps) => {
       <View className="flex-row items-end gap-2 max-w-[80%]">
         {!isUser && (
           <View className="w-8 h-8 bg-blue-100 rounded-full items-center justify-center mb-1">
-            <MaterialCommunityIcons name="robot" size={16} color="#3B82F6" />
+            <MaterialCommunityIcons name="robot" size={16} color="#304FFF" />
           </View>
         )}
         
